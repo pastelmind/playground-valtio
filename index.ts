@@ -1,12 +1,9 @@
 import * as assert from "node:assert/strict";
-import { getVersion, proxy, snapshot, subscribe } from "valtio";
-
-function isProxy(value: unknown): boolean {
-  return getVersion(value) !== undefined;
-}
+import { proxy, snapshot, subscribe } from "valtio";
+import { isProxy } from "./util.js";
 
 class State {
-  names: string[] = [];
+  names: string[] = ["foo", "bar", "baz"];
   values: Record<string, number> = { foo: 1 };
 
   getNames() {
@@ -18,9 +15,7 @@ class State {
 const store = proxy(new State());
 
 // Let's listen to state changes
-subscribe(store, () => {
-  console.log("state changed to:", store);
-});
+subscribe(store, () => console.log("state changed to:", store), true);
 
 console.log("Testing store proxy...");
 store.getNames();
@@ -30,18 +25,28 @@ const snap = snapshot(store);
 snap.names; //      ✅ readonly string[]
 snap.getNames(); // ❌ string[]
 
+// This throws as of Valtio 1.10.7
+assert.throws(() => {
+  // @ts-expect-error This is prevented by Snapshot<T>
+  snap.names.push("foo");
+});
+
 // ❗️ This will NOT throw at runtime, but silently ignored
 // @ts-expect-error This is prevented by Snapshot<T>
-snap.names.push("foo");
+snap.names.pop();
 console.log("state:", store);
 
-// ❗️ This will NOT throw at runtime, but silently ignored
-// @ts-expect-error This is prevented by Snapshot<T>
-snap.names[0] = "asdf";
+// This throws as of Valtio 1.10.7
+assert.throws(() => {
+  // @ts-expect-error This is prevented by Snapshot<T>
+  snap.names[0] = "asdf";
+});
 
-// 🚨 This will NOT throw at runtime either
-// This is not guarded by TypeScript
-snap.getNames().push("foo");
+// This throws as of Valtio 1.10.7
+assert.throws(() => {
+  // This is not guarded by TypeScript
+  snap.getNames().push("foo");
+});
 console.log("state:", store);
 
 // ✅ This WILL throw at runtime
