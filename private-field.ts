@@ -1,3 +1,4 @@
+import * as assert from "node:assert/strict";
 import { proxy, subscribe } from "valtio";
 
 interface Train {
@@ -25,7 +26,13 @@ subscribe(store, () => console.log("Store updated to:", store), true);
 // available on the proxy object
 
 console.log("Mutating array directly");
-store.trains.push({ id: "train0", passengers: 100 });
+assert.throws(
+  () => store.trains.push({ id: "train0", passengers: 100 }),
+  TypeError
+);
 
 console.log("Calling mutation method");
-store.addTrain({ id: "train1", passengers: 200 });
+assert.throws(
+  () => store.addTrain({ id: "train1", passengers: 200 }),
+  TypeError
+);
