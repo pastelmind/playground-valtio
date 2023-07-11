@@ -3,6 +3,7 @@
     "forceConsistentCasingInFileNames": true,
     "module": "NodeNext",
     "strict": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "verbatimModuleSyntax": true
   }
 }
