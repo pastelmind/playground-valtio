@@ -26,3 +26,21 @@ logEval("Object.is(p3.another, p4)");
 // Calling proxy() on a proxy
 const p5 = proxy(p1);
 logEval("Object.is(p1, p5)");
+
+// Identity of object added at multiple locations within the state tree
+const p6 = proxy<Record<string, unknown>>({});
+const child6 = { foo: 1 };
+p6.a = child6;
+p6.b = child6;
+logEval("Object.is(p6.a, p6.b)");
+
+// Identity of proxy added at multiple locations within the state tree
+const p7 = proxy<Record<string, Child7>>({});
+const child7 = { foo: 1 };
+type Child7 = typeof child7;
+p7.a = child7;
+p7.b = p7.a;
+logEval("Object.is(p7.a, p7.b)");
+p7.a.foo = 2;
+logEval("p7.a.foo");
+logEval("p7.b.foo");
