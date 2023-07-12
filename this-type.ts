@@ -2,7 +2,8 @@
 // typed data, regardless of whether the object is a proxy or snapshot.
 
 import { expectTypeOf } from "expect-type";
-import { proxy, snapshot, INTERNAL_Snapshot as Snapshot } from "valtio";
+import { proxy, snapshot } from "valtio";
+import type { MaybeSnapshot, Mutable, Snapshot } from "./util.js";
 
 interface Pet {
   name: string;
@@ -53,3 +54,34 @@ expectTypeOf(classStore.getAges()).toEqualTypeOf<number[]>();
 expectTypeOf(classSnap.getAges()).toEqualTypeOf<readonly number[]>();
 expectTypeOf(classStore.getPets()).toEqualTypeOf<Pet[]>();
 expectTypeOf(classSnap.getPets()).toEqualTypeOf<readonly Readonly<Pet>[]>();
+
+interface Pilot {
+  name: string;
+  age: number;
+}
+
+class Airplane {
+  pilot?: Pilot;
+
+  getPilot<Self extends MaybeSnapshot<this>>(this: Self) {
+    if (!this.pilot) return null;
+    return this.pilot as NonNullable<Self["pilot"]>;
+  }
+
+  setPilot<Self extends this>(this: Mutable<Self>, pilot: Pilot) {
+    if (this.getPilot()?.name === pilot.name) {
+      throw new Error("Pilot already exists");
+    }
+    this.pilot = pilot;
+  }
+}
+
+const airplaneStore = proxy(new Airplane());
+const airplaneSnap = snapshot(airplaneStore);
+
+expectTypeOf(airplaneStore.getPilot()).toEqualTypeOf<Pilot | null>();
+expectTypeOf(airplaneSnap.getPilot()).toEqualTypeOf<Snapshot<Pilot> | null>();
+
+airplaneStore.setPilot({ name: "mika", age: 50 });
+// @ts-expect-error
+airplaneSnap.setPilot({ name: "margo", age: 40 });

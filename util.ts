@@ -1,6 +1,11 @@
-import { getVersion } from "valtio";
+import type { IsEqual } from "type-fest";
+import { getVersion, type INTERNAL_Snapshot as Snapshot } from "valtio";
 
-export type { INTERNAL_Snapshot as Snapshot } from "valtio";
+export type { Snapshot };
+
+export type IsSnapshot<T extends object> = IsEqual<T, Snapshot<T>>;
+export type MaybeSnapshot<T extends object> = T | Snapshot<T>;
+export type Mutable<T extends object> = IsSnapshot<T> extends true ? never : T;
 
 export function isProxy(value: unknown): boolean {
   return getVersion(value) !== undefined;
