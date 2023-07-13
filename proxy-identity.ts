@@ -14,11 +14,11 @@ const p2 = proxy(obj);
 logEval("Object.is(p1, p2)");
 
 // Calling proxy() on object that is part of another state tree
-const anotherObj = { baz: true };
 const p3 = proxy({ wrapped: obj });
 logEval("Object.is(p3.wrapped, p1)");
 
 // Calling proxy() on object that is incorporated into an existing state tree
+const anotherObj = { baz: true };
 (p3 as Record<string, unknown>).another = anotherObj;
 const p4 = proxy(anotherObj);
 logEval("Object.is(p3.another, p4)");
@@ -44,3 +44,14 @@ logEval("Object.is(p7.a, p7.b)");
 p7.a.foo = 2;
 logEval("p7.a.foo");
 logEval("p7.b.foo");
+
+// Adding a proxy to another proxy with defineProperty()
+const p8 = proxy({ a: 1 });
+const p9 = proxy({ b: 1 });
+Object.defineProperty(p8, "child", {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value: p9,
+});
+logEval("Object.is(p8.child, p9)");
