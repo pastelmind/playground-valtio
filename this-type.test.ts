@@ -2,6 +2,7 @@
 // typed data, regardless of whether the object is a proxy or snapshot.
 
 import { expectTypeOf } from "expect-type";
+import assert from "node:assert/strict";
 import { proxy, snapshot } from "valtio";
 import type { MaybeSnapshot, Mutable, Snapshot } from "./util.js";
 
@@ -83,5 +84,7 @@ expectTypeOf(airplaneStore.getPilot()).toEqualTypeOf<Pilot | null>();
 expectTypeOf(airplaneSnap.getPilot()).toEqualTypeOf<Snapshot<Pilot> | null>();
 
 airplaneStore.setPilot({ name: "mika", age: 50 });
-// @ts-expect-error
-airplaneSnap.setPilot({ name: "margo", age: 40 });
+assert.throws(() => {
+  // @ts-expect-error
+  airplaneSnap.setPilot({ name: "margo", age: 40 });
+});
