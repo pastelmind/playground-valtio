@@ -7,11 +7,11 @@
     "start": "tsx index.ts"
   },
   "dependencies": {
-    "type-fest": "^3.13.0",
-    "valtio": "^1.10.7"
+    "type-fest": "^4.0.0",
+    "valtio": "^1.11.0"
   },
   "devDependencies": {
-    "@types/node": "^20.4.1",
+    "@types/node": "^18.16.19",
     "expect-type": "^0.16.0",
     "tsx": "^3.12.7"
   }
