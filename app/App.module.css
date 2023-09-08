@@ -1,0 +1,6 @@
+.ButtonGroup {
+  display: flex;
+  flex-direction: row;
+  margin: 8px;
+  gap: 8px;
+}

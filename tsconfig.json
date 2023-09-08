@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
     "module": "NodeNext",
     "strict": true,
     "target": "ESNext",
