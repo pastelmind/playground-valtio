@@ -7,12 +7,12 @@
     "test": "tsx --test *.test.ts"
   },
   "dependencies": {
-    "type-fest": "^4.0.0",
-    "valtio": "^1.11.0"
+    "type-fest": "^4.3.1",
+    "valtio": "^1.11.2"
   },
   "devDependencies": {
-    "@types/node": "^18.16.19",
+    "@types/node": "^18.17.14",
     "expect-type": "^0.16.0",
-    "tsx": "^3.12.7"
+    "tsx": "^3.12.8"
   }
 }
