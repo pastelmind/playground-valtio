@@ -1,38 +1,45 @@
-import { useSnapshot } from "valtio";
+import { proxy, useSnapshot } from "valtio";
 import { proxyWithHistory } from "valtio/utils";
 import styles from "./App.module.css";
 
-const state = proxyWithHistory({ count: 0 });
+const createHistory = () => proxyWithHistory({ count: 0 });
+
+const state = proxy({
+  history: createHistory(),
+});
 
 const increase = () => {
-  state.value.count += 100;
+  state.history.value.count += 100;
 };
 const decrease = () => {
-  state.value.count -= 100;
+  state.history.value.count -= 100;
 };
 const undo = () => {
-  state.undo();
+  state.history.undo();
 };
 const redo = () => {
-  state.redo();
+  state.history.redo();
 };
 const scrambleInPlace = () => {
   const count = Math.floor(Math.random() * 1000);
 
   // This doesn't work
-  // state.value = { count };
+  // state.history.value = { count };
 
   // This doesn't work
-  // state.history.snapshots[state.history.index].count = count;
+  // state.history.history.snapshots[state.history.history.index].count = count;
 
   // This works, but removes all "redo" history
-  state.undo();
-  state.value.count = count;
-  state.saveHistory();
+  state.history.undo();
+  state.history.value.count = count;
+  state.history.saveHistory();
 };
 const forceSaveHistory = () => {
-  // state.saveHistory();
-  state.value.count = state.value.count;
+  // state.history.saveHistory();
+  state.history.value.count = state.history.value.count;
+};
+const resetHistory = () => {
+  state.history = createHistory();
 };
 
 export const App = () => {
@@ -41,7 +48,7 @@ export const App = () => {
   return (
     <div>
       <section>
-        <div>Count: {snapshot.value.count}</div>
+        <div>Count: {snapshot.history.value.count}</div>
         <div className={styles.ButtonGroup}>
           <button type="button" onClick={increase}>
             Increase
@@ -53,14 +60,22 @@ export const App = () => {
       </section>
       <footer>
         <div>
-          History index: {snapshot.history.index} /{" "}
-          {snapshot.history.snapshots.length}
+          History index: {snapshot.history.history.index} /{" "}
+          {snapshot.history.history.snapshots.length}
         </div>
         <div className={styles.ButtonGroup}>
-          <button type="button" onClick={undo} disabled={!snapshot.canUndo()}>
+          <button
+            type="button"
+            onClick={undo}
+            disabled={!snapshot.history.canUndo()}
+          >
             Undo
           </button>
-          <button type="button" onClick={redo} disabled={!snapshot.canRedo()}>
+          <button
+            type="button"
+            onClick={redo}
+            disabled={!snapshot.history.canRedo()}
+          >
             Redo
           </button>
           <button type="button" onClick={scrambleInPlace}>
@@ -69,13 +84,20 @@ export const App = () => {
           <button type="button" onClick={forceSaveHistory}>
             Force Save History
           </button>
+          <button type="button" onClick={resetHistory}>
+            Reset history
+          </button>
         </div>
         <ol start={0}>
-          {snapshot.history.snapshots.map((entry, index) => {
+          {snapshot.history.history.snapshots.map((entry, index) => {
             const text = `Count: ${entry.count}`;
             return (
               <li key={index}>
-                {index === snapshot.history.index ? <b>{text}</b> : text}
+                {index === snapshot.history.history.index ? (
+                  <b>{text}</b>
+                ) : (
+                  text
+                )}
               </li>
             );
           })}
