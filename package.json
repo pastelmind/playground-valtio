@@ -10,15 +10,15 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "type-fest": "^4.5.0",
+    "type-fest": "^4.26.1",
     "valtio": "^1.11.3"
   },
   "devDependencies": {
-    "@types/node": "^18.18.6",
+    "@types/node": "^18.19.59",
     "@types/react": "^18.2.31",
     "@types/react-dom": "^18.2.14",
-    "expect-type": "^0.17.3",
-    "tsx": "^3.14.0",
-    "vite": "^4.5.0"
+    "expect-type": "^1.1.0",
+    "tsx": "^4.19.2",
+    "vite": "^5.4.10"
   }
 }
